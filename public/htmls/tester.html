@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>api-tester</title>
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+</head>
+<body>
+<h1>API Testing Page</h1>
+<div>
+    <h4>Standard Get Request without Parameters</h4>
+    <button onclick="getUsers()">Start</button>
+    <h4>Sample Get Request with parameters</h4>
+    <button onclick="getSongInGenre()">Start</button>
+    <h4>Sample Post Request</h4>
+    <button onclick="postUser()">Start</button>
+
+</div>
+<div>
+    <h2>Please check your console log</h2>
+    <div id="resultArea"></div>
+</div>
+
+<script>
+
+    function getUsers(){
+        $.ajax({
+            url: "https://apis.k-karaoke.com/users",
+            type: "GET",
+            headers: {
+                "Authorization": "Basic "+window.btoa('aaa:bbb')
+            },
+            success: function (data) {
+                console.log(data)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    function getSongInGenre(){
+        $.ajax({
+            url: "https://apis.k-karaoke.com/genres/songs/1",
+            type: "GET",
+            headers: {
+                "Authorization": "Basic "+window.btoa('aaa:bbb')
+            },
+            success: function (data) {
+                console.log(data)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    function postUser(){
+        $.ajax({
+            url: "https://apis.k-karaoke.com/users",
+            type: "POST", //This is what you should chage
+            headers: {
+                "Authorization": "Basic "+window.btoa('aaa:bbb')
+            },
+
+            data: {
+                "devicecode":"AAABBBCCC",
+                "name":"testUser ",
+                "email": "test@kchannel.com",
+                "ip_address": "192.0.0.1"
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (xhr, ajaxOptions, thrownError) { //Add these parameters to display the required response
+                alert(xhr.status);
+                alert(xhr.responseText);
+            }
+        });
+    }
+</script>
+</body>
+</html>

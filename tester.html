@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>api-tester</title>
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+</head>
+<body>
+<h1>API Testing Page</h1>
+<div>
+    <h4>Standard Get Request without Parameters</h4>
+    <button onclick="getUsers()">Start</button>
+    <h4>Sample Get song in genre</h4>
+    <button onclick="getSongInGenre()">Start</button>
+    <h4>Sample Post User</h4>
+    <button onclick="postUser()">Start</button>
+    <h4>Sample Post Subscription</h4>
+    <button onclick="postSubscription()">Start</button>
+    <h4>Get subscription list</h4>
+    <button onclick="geSubscriptionList(1)">Roku</button>
+    <button onclick="geSubscriptionList(2)">Metro</button>
+
+</div>
+<div>
+    <h2>Please check your console log</h2>
+    <div id="resultArea"></div>
+</div>
+
+<script>
+
+    function geSubscriptionList(user){
+        var authStr;
+        if(user == 1){
+            authStr = 'ktvroku:ktvroku';
+        }else{
+            authStr = '34ZURSJA61OM84DU5C1EQAWB4:GE15DmixZRf2F3yENl4NeZ8U3xl4gpNwHVyCUXhLbEQ';
+        }
+        $.ajax({
+            url: "http://localhost:3000/users/subscriptionlist",
+            type: "GET",
+            headers: {
+                "Authorization": "Basic "+window.btoa(authStr)
+            },
+            success: function (data) {
+                console.log(data)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    function getUsers(){
+        $.ajax({
+            url: "http://localhost:3000/users",
+            type: "GET",
+            headers: {
+                "Authorization": "Basic "+window.btoa('kchannel2016rokuusername')+
+                ':'+window.btoa('kchannel2016rokupassword')
+            },
+            success: function (data) {
+                console.log(data)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+
+
+    function getSongInGenre(){
+        $.ajax({
+            url: "https://apis.k-karaoke.com/genres/songs/1",
+            type: "GET",
+            headers: {
+                "Authorization": "Basic "+window.btoa('kchannel2016rokuusername')+
+                ':'+window.btoa('kchannel2016rokupassword')
+            },
+            success: function (data) {
+                console.log(window.btoa('ktvroku:ktvroku'))
+                console.log(window.atob(encodedData))
+                console.log(data)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+     function postUser(){
+        $.ajax({
+             url: "http://localhost:3000/users",
+             type: "POST", //This is what you should chage
+              headers: {
+                "Authorization": "Basic "+window.btoa('34ZURSJA61OM84DU5C1EQAWB4:GE15DmixZRf2F3yENl4NeZ8U3xl4gpNwHVyCUXhLbEQ')
+              },
+
+              data: {
+                  "devicecode":"testMt13",
+                  "name":"MT13",
+                  "email": "test@kchannel.com",
+                  "ip_address": "192.0.0.1"
+              },
+             success: function (data) {
+                 console.log(data);
+             },
+             error: function (xhr, ajaxOptions, thrownError) { //Add these parameters to display the required response
+                 alert(xhr.status);
+                 alert(xhr.responseText);
+             }
+         });
+     }
+
+    function postSubscription(){
+        console.log(window.btoa('kchannel2016rokuusername:kchannel2016rokupassword'))
+        $.ajax({
+            url: "http://localhost:3000/users/subscription",
+            type: "POST", //This is what you should chage
+            headers: {
+                "Authorization": "Basic "+window.btoa('kchannel2016rokuusername')+
+                ':'+window.btoa('kchannel2016rokupassword')
+            },
+
+            data: {
+                "userid":"49",
+                "subscriptiontypeid": 8
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (xhr, ajaxOptions, thrownError) { //Add these parameters to display the required response
+                alert(xhr.status);
+                alert(xhr.responseText);
+            }
+        });
+    }
+</script>
+</body>
+</html>
