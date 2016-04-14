@@ -56,68 +56,89 @@ router.get('/', passport.authenticate('basic', { session: false }), function(req
  */
 
 router.post('/', passport.authenticate('basic', { session: false }), function(req, res){
+    console.log("herererereerere")
     var playlistName = req.body.playlistname;
     var userId = req.body.userid;
     var playlistSongs = req.body.playlistsongs;
-
+    console.log(playlistSongs)
+    playlistSongs = playlistSongs.replace('"', '');
+    playlistSongs = playlistSongs.replace("'", "");
     var playlistArr = playlistSongs.split(',');
     var playlistId;
     var a = '0'
     console.log(playlistName, userId, playlistArr);
     var errArr = [];
-    connection.query(queries.playlist.getMaxPlaylistId, function(error, result){
-        if(error){
-            //throw error;
-            console.log(error);
-            errArr.push(error);
-        }else {
-            playlistId = (result[0].playlist-0)+1;
-            console.log(playlistId);
 
-            connection.beginTransaction(function(err) {
-                if (err) { errArr.push(error); }
-                connection.query(queries.playlist.newPlaylist, [playlistId, playlistName, userId, 1], function(err, result) {
-                    if (err) {
+    connection.query(queries.users.checkUserById, [userId], function(err, result){
+        if(err){
+            res.send('userId does not exist');
+        }else{
+            if(result.length==0){
+                res.send('userId does not exist');
+            }else{
+                connection.query(queries.playlist.getMaxPlaylistId, function(error, result){
+                    if(error){
+                        //throw error;
+                        //console.log(error);
                         errArr.push(error);
-                        return connection.rollback();
-                    }else{
-                        playlistArr.forEach(function(songid, index){
-                            connection.query(queries.playlist.addSongsToPlaylist, [playlistId, songid, 1], function(err, result) {
-                                console.log('foreach...'+index)
+                    }else {
+                        playlistId = (result[0].playlist-0)+1;
+                        console.log(playlistId);
+                        connection.beginTransaction(function(err) {
+                            if (err) { errArr.push(error); }
+                            connection.query(queries.playlist.newPlaylist, [playlistId, playlistName, userId, 1], function(err, result) {
                                 if (err) {
                                     errArr.push(error);
-                                    return connection.rollback(function(){
-                                        res.send('error')
-                                    });
+                                    return connection.rollback();
                                 }else{
-                                    if(index==playlistArr.length-1){
-                                        console.log('herehere')
-                                        if(errArr.length == 0){
-                                            connection.commit(function(err) {
-                                                if (err) {
-                                                    errArr.push(error);
-                                                    return connection.rollback();
-                                                }else{
-                                                    if(errArr.lengh==0){
-                                                        res.send('error')
+                                    playlistArr.forEach(function(songid, index){
+                                        connection.query(queries.playlist.addSongsToPlaylist, [playlistId, songid, 1], function(err, result) {
+                                            //console.log('foreach...'+index)
+                                            if (err) {
+                                                errArr.push(error);
+                                                return connection.rollback(function(){
+                                                    res.send('error')
+                                                });
+                                            }else{
+                                                if(index==playlistArr.length-1){
+                                                    console.log(errArr.length)
+                                                    if(errArr.length == 0){
+                                                        connection.commit(function(err) {
+                                                            if (err) {
+                                                                errArr.push(error);
+                                                                return connection.rollback();
+                                                            }else{
+                                                                if(errArr.lengh==0){
+                                                                    res.send('error2')
+                                                                }else{
+                                                                    console.log('success'+a)
+                                                                    var resData = {
+                                                                        "status": "successful",
+                                                                        "userId": userId,
+                                                                        "playlistId": playlistId,
+                                                                        "playlistName": playlistName
+                                                                    };
+                                                                    res.send(resData);
+                                                                }
+                                                            }
+                                                        });
                                                     }else{
-                                                        console.log('success'+a)
-                                                        res.send('success')
+                                                        res.send('error3');
                                                     }
                                                 }
-                                            });
-                                        }else{
-                                            res.send('error');
-                                        }
-                                    }
+                                            }
+                                        });
+                                    });
                                 }
                             });
                         });
                     }
-                });
-            });
+                })
+            }
         }
     })
+
+
 });
 /**
  * list all playlist for a given user ID

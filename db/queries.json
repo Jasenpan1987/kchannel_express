@@ -21,10 +21,10 @@
     "songsInPlaylist":"SELECT song.song_id, sku, title, artist, CONCAT(?,song_link) AS song_link FROM song, playlist_song WHERE playlist_song.song_id = song.song_id AND is_active = 1 AND playlist_id =?"
   },
   "homeblock": {
-    "bestGroup":"SELECT block_has_song.id, song.song_id, sku, title, artist, YEAR, CONCAT(?,song_link) AS song_link, genre_id, STATUS FROM block_has_song, genre_has_song, song WHERE block_id=1 AND block_has_song.song_id=song.song_id AND genre_has_song.song_id=song.song_id GROUP BY song.song_id ORDER BY block_id asc",
-    "top5":"SELECT block_has_song.id, song.song_id, genre_has_song.genre_id, sku, title, artist, YEAR, CONCAT(?,song_link) AS song_link, STATUS FROM block_has_song, song, genre_has_song WHERE block_id=2 AND block_has_song.song_id=song.song_id AND song.song_id=genre_has_song.song_id GROUP BY song.song_id ORDER BY block_id asc",
+    "bestGroup":"SELECT id, song.song_id, sku, title, artist, year, CONCAT(?,song_link) AS song_link, status FROM block_has_song, song WHERE block_id=1 AND block_has_song.song_id=song.song_id ORDER BY block_id asc",
+    "top5":"SELECT id, song.song_id, sku, title, artist, year, CONCAT(?,song_link) AS song_link, status FROM block_has_song, song WHERE block_id=2 AND block_has_song.song_id=song.song_id ORDER BY block_id asc",
     "bannerGenre":"SELECT block_has_banner.id, genre.genre_id, genre.genre_name, CONCAT(?, genre.genre_banner) AS genre_banner FROM block_has_banner, genre WHERE block_has_banner.genre_id = genre.genre_id AND block_id=3",
-    "newRelease":"SELECT block_has_image.id, artist, block_has_image.song_id, genre_has_song.genre_id, CONCAT(?, image_link) AS image_link, CONCAT(?,song_link) AS song_link, song.title FROM song, block_has_image, genre_has_song WHERE song.song_id = block_has_image.song_id AND block_id=4 AND genre_has_song.song_id=song.song_id GROUP BY song.song_id"
+    "newRelease":"SELECT id, artist, block_has_image.song_id, CONCAT(?, image_link) AS image_link, CONCAT(?,song_link) AS song_link, song.title FROM song, block_has_image WHERE song.song_id = block_has_image.song_id AND block_id=4"
   },
   "users":{
     "allUsers": "SELECT U.* FROM users AS U INNER JOIN users_has_platform AS P ON U.user_id=P.user_id WHERE P.platform_id=?",
@@ -40,5 +40,8 @@
     "checkSubscriptionById":"SELECT * FROM subscription_type WHERE id = ? AND platform_id = ?",
     "getSubscriptionType": "SELECT * FROM subscription_type WHERE id=? AND platform_id = ?",
     "createSubscription": "INSERT INTO subscription (user_id, subscription_type_id, expiry_date, STATUS) VALUES(?, ?, ?, 1)"
+  },
+  "payment":{
+    "CreateSubscriptionPayment": "INSERT INTO subscription_payment (user_id, subscription_id, product_id, price, payment_status, transaction_id, currency, created_at, test_card) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
   }
 }
