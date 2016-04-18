@@ -1,8 +1,8 @@
 {
   "getAuthUser": "SELECT * FROM api_consumers WHERE username=? AND password=?",
   "genres":{
-    "allGenres": "SELECT genre_id, genre_name, CONCAT(?, genre_image) AS genre_image, CONCAT(?, genre_thumbnail) AS genre_thumbnail, CONCAT(?, genre_banner) AS genre_banner, STATUS, POSITION FROM genre WHERE STATUS=1 ORDER BY genre_id ASC",
-    "singleGenre": "SELECT genre_id, genre_name, CONCAT(?, genre_image) AS genre_image, CONCAT(?, genre_thumbnail) AS genre_thumbnail, CONCAT(?, genre_banner) AS genre_banner, STATUS, POSITION FROM genre WHERE genre_id=?"
+    "allGenres": "SELECT g.genre_id, g.genre_name, CONCAT(?,g.genre_image) AS genre_image, CONCAT(?,g.genre_thumbnail) AS genre_thumbnail, CONCAT(?,g.genre_banner) AS genre_banner, g.STATUS, g.POSITION, (SELECT COUNT(*) FROM genre_has_song AS gc INNER JOIN song AS s WHERE gc.genre_id=g.genre_id AND gc.song_id= s.song_id AND s.status = 1) AS genre_count FROM genre AS g WHERE STATUS=1",
+    "singleGenre": "SELECT g.genre_id, g.genre_name, CONCAT(?,g.genre_image) AS genre_image, CONCAT(?,g.genre_thumbnail) AS genre_thumbnail, CONCAT(?,g.genre_banner) AS genre_banner, g.STATUS, g.POSITION,(SELECT COUNT(*) FROM genre_has_song AS gc INNER JOIN song AS s WHERE gc.genre_id=g.genre_id AND gc.song_id= s.song_id AND s.status = 1) AS genre_countFROM genre AS g WHERE STATUS=1 AND g.genre_id=?"
   },
   "songs":{
     "allSongs": "SELECT s.song_id, s.sku, s.artist, s.year, s.status, CONCAT(?, s.song_link) AS song_link, s.title, GROUP_CONCAT(gs.genre_id ) AS 'Genre_Id' FROM song AS s INNER JOIN genre_has_song AS gs WHERE gs.song_id = s.song_id GROUP BY s.song_id",
@@ -42,6 +42,6 @@
     "createSubscription": "INSERT INTO subscription (user_id, subscription_type_id, expiry_date, STATUS) VALUES(?, ?, ?, 1)"
   },
   "payment":{
-    "CreateSubscriptionPayment": "INSERT INTO subscription_payment (user_id, subscription_id, product_id, price, payment_status, transaction_id, currency, created_at, test_card) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    "createSubscriptionPayment": "INSERT INTO subscription_payment (user_id, subscription_id, product_id, price, payment_status, transaction_id, currency, test_card) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
   }
 }

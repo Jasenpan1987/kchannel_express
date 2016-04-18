@@ -441,6 +441,7 @@ var getSubscriptionType = function(httpObj){
                     deferred.reject('error')
                 }else{
                     httpObj.subscription_obj = result[0];
+
                     //console.log(result);
                     deferred.resolve(httpObj);
                 }
@@ -470,15 +471,45 @@ var createUserSubscription = function(httpObj){
     connection.query(queries.users.createSubscription,
         [httpObj.req.body.userid, httpObj.req.body.subscriptiontypeid, expDate], function(err, result){
             if(err){
-
+                console.log(err)
                 deferred.reject(err)
             }else{
-
+                console.log(result.insertId+"========");
+                httpObj.req.body.subscriptionid = result.insertId;
                 deferred.resolve(httpObj);
             }
         });
     return deferred.promise;
 };
+
+
+
+var createSubscriptionPayment = function(httpObj){
+    //console.log('11111111')
+    var deferred = Q.defer();
+    httpObj.req.body.testcard = 0;
+    if(httpObj.req.body.subscriptionid == '99999'){
+        testcard = 1;
+    }
+    console.log(httpObj.req.body.userid, httpObj.req.body.subscriptionid,
+        httpObj.req.body.productid, httpObj.req.body.price,
+        1, httpObj.req.body.transactionid, httpObj.req.body.currency, httpObj.req.body.testcard);
+
+    connection.query(queries.payment.createSubscriptionPayment,
+        [httpObj.req.body.userid, httpObj.req.body.subscriptionid,
+            httpObj.req.body.productid, httpObj.req.body.price,
+            1, httpObj.req.body.transactionid, httpObj.req.body.currency, httpObj.req.body.testcard],
+    function(error, result){
+        if(error){
+            console.log(error)
+            deferred.reject(error);
+        }else{
+            deferred.resolve(httpObj);
+        }
+    })
+    //console.log(httpObj.req.body.userid, httpObj.req.body.subscriptiontypeid)
+    return deferred.promise;
+}
 
 var sendResult = function(httpObj){
 
@@ -491,7 +522,7 @@ var sendResult = function(httpObj){
                 deferred.reject(error)
             }else {
                 httpObj.res.send({
-                    "status": "create subscription successful",
+                    "status": "successful",
                     "userId": httpObj.req.body.userid,
                     "subscriptionCode": httpObj.req.body.subscriptiontypeid,
                     "subscriptionType": result[0].subscription_name
@@ -515,9 +546,9 @@ router.post('/subscription', passport.authenticate('basic', { session: false }),
     };
     //
     getPlatform(httpObj).then(checkUserById).then(checkSubscriptionById).then(getSubscriptionType)
-        .then(createUserSubscription).then(sendResult)
+        .then(createUserSubscription).then(createSubscriptionPayment).then(sendResult)
         .catch(function(error){
-            //console.log(error)
+            console.log(error)
             res.status(400);
             res.send('error on create user');
         });
