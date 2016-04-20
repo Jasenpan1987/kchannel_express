@@ -17,7 +17,8 @@ var songs = require('./routes/songs');
 var featured = require('./routes/featured');
 var playlist = require('./routes/playlist');
 var homeblock = require('./routes/homeblock');
-var payment = require('./routes/payment');
+//var payment = require('./routes/payment');
+var roku_notification_handler = require('./routes/roku_notification_handler');
 
 // Configure the Basic strategy for use by Passport.
 //
@@ -83,7 +84,8 @@ app.use('/songs', songs);
 app.use('/featured', featured);
 app.use('/playlist', playlist);
 app.use('/homeblock', homeblock);
-app.use('/payment', payment);
+//app.use('/payment', payment);
+app.use('/notifications', roku_notification_handler);
 
 
 

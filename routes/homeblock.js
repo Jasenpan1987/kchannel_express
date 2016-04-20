@@ -5,8 +5,8 @@ var router = express.Router();
 var connection = require('../db');
 var queries = require('../db/queries');
 
-var img_base_url = 'http://kchannel.s3.amazonaws.com/';
-var video_base_url = 'http://s3-ap-southeast-2.amazonaws.com/kchannelaus/';
+var img_base_url = 'http://d37ue36c90zr4n.cloudfront.net/';
+var video_base_url = 'http://d37ue36c90zr4n.cloudfront.net/';
 
 
 

@@ -9,8 +9,8 @@ var router = express.Router();
 var connection = require('../db');
 var queries = require('../db/queries');
 
-var img_base_url = 'http://www.dv1.com.au/karaoke/media/catalog/category/';
-var video_base_url = 'http://s3-ap-southeast-2.amazonaws.com/kchannelaus/';
+var img_base_url = 'http://d37ue36c90zr4n.cloudfront.net/';
+var video_base_url = 'http://d37ue36c90zr4n.cloudfront.net/';
 
 /**
  * list all playlists

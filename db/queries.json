@@ -43,5 +43,8 @@
   },
   "payment":{
     "createSubscriptionPayment": "INSERT INTO subscription_payment (user_id, subscription_id, product_id, price, payment_status, transaction_id, currency, test_card) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+  },
+  "roku":{
+    "rokuTransaction": "INSERT INTO roku_transactions (customerId, userid, transactionType, transactionId, channelId, channelName, productCode, productName, price, total, tax, currency, comments, eventDate, responseKey, originalTransactionId, originalPurchaseDate, expirationDate, partnerReferenceId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
   }
 }

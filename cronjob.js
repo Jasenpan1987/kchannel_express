@@ -13,7 +13,7 @@ new CronJob('0 */15 * * * *', function() {
         password:'KtvRDS15',
         database: 'karaoke_db'
     });
-
+//curdate+4hours
     connection.query('UPDATE subscription SET STATUS=0 WHERE STATUS=1 AND expiry_date< CURDATE()',
         function(error, result){
             if(error){
