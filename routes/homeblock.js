@@ -20,7 +20,7 @@ var video_base_url = 'http://d37ue36c90zr4n.cloudfront.net/';
 
 var getBgroupGenre = function(res){
     var deferred = Q.defer();
-    connection.query(queries.homeblock.bestGroup, [video_base_url], function(error, result){
+    connection.query(queries.homeblock.bestGroup, [img_base_url, video_base_url], function(error, result){
         if(error){
             deferred.reject(error);
         }else{
@@ -35,7 +35,7 @@ var getBgroupGenre = function(res){
 
 var getT5Genre = function(res){
     var deferred = Q.defer();
-    connection.query(queries.homeblock.top5,[video_base_url], function(error, result){
+    connection.query(queries.homeblock.top5,[img_base_url, video_base_url], function(error, result){
         if(error){
             deferred.reject(error);
         }else{
@@ -65,7 +65,7 @@ var getBannerGenre = function(res){
 
 var getNewReleaseGenre = function(res){
     var deferred = Q.defer();
-    connection.query(queries.homeblock.newRelease,[img_base_url, video_base_url], function(error, result){
+    connection.query(queries.homeblock.newRelease,[img_base_url, img_base_url, video_base_url], function(error, result){
         if(error){
             deferred.reject(error);
         }else{

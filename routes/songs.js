@@ -15,7 +15,7 @@ var video_base_url = 'http://d37ue36c90zr4n.cloudfront.net/';
  */
 router.get('/', passport.authenticate('basic', { session: false }),
     function(req, res) {
-        connection.query(queries.songs.allSongs, ["video_base_url"],
+        connection.query(queries.songs.allSongs, [img_base_url, video_base_url],
             function(error, result){
             if(error){
                 //throw error;
@@ -37,7 +37,7 @@ router.get('/', passport.authenticate('basic', { session: false }),
 
 router.get('/:id',passport.authenticate('basic', { session: false }), function(req, res){
     var songId = req.params.id;
-    connection.query(queries.songs.singleSong, [video_base_url, songId], function(error, result){
+    connection.query(queries.songs.singleSong, [img_base_url, video_base_url, songId], function(error, result){
         if(error){
             //throw error;
             console.log(error);

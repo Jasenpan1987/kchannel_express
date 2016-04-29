@@ -35,7 +35,7 @@ router.get('/', passport.authenticate('basic', { session: false }),
 router.get('/songs/:genreId', passport.authenticate('basic', { session: false }), function(req, res) {
     var genId = req.params.genreId;
     console.log(queries.songs.songsInGenre);
-    connection.query(queries.songs.songsInGenre, [video_base_url, genId], function(error, result){
+    connection.query(queries.songs.songsInGenre, [img_base_url, video_base_url, genId], function(error, result){
         if(error){
             //throw error;
             console.log(error);

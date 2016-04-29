@@ -162,7 +162,7 @@ router.get('/:userid', passport.authenticate('basic', { session: false }), funct
  */
 router.get('/songs/:playlistid', passport.authenticate('basic', { session: false }), function(req, res){
     var playlistId = req.params.playlistid;
-    connection.query(queries.playlist.songsInPlaylist, [video_base_url, playlistId], function(error, result){
+    connection.query(queries.playlist.songsInPlaylist, [img_base_url, video_base_url, playlistId], function(error, result){
         if(error){
             //throw error;
             console.log();
