@@ -5,7 +5,7 @@ var connection = require('../db');
 var queries = require('../db/queries');
 var Q = require('q');
 
-var rokuApiKey = '8225825862AC2049B28CA2C90152A8195642';
+var rokuApiKey = '1767EB88A2FDE842879FA586015184B75642';
 /***
  * This route is designed for handling the notification request from roku server.
  * A few items have been implemented to ensure security. Roku sends a responseKey as shown in the examples below.
@@ -90,9 +90,19 @@ var rokuApiKey = '8225825862AC2049B28CA2C90152A8195642';
  }
 
  */
-
+function js_yyyy_mm_dd_hh_mm_ss () {
+    now = new Date();
+    year = "" + now.getFullYear();
+    month = "" + (now.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
+    day = "" + now.getDate(); if (day.length == 1) { day = "0" + day; }
+    hour = "" + now.getHours(); if (hour.length == 1) { hour = "0" + hour; }
+    minute = "" + now.getMinutes(); if (minute.length == 1) { minute = "0" + minute; }
+    second = "" + now.getSeconds(); if (second.length == 1) { second = "0" + second; }
+    return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+}
 
 var roku_transaction_insertionHandler = function(httpObj){
+    var deferred = Q.defer();
     //common fields
     var customerId = httpObj.req.body.customerId;
     var userId = httpObj.req.body.userid;
@@ -102,7 +112,7 @@ var roku_transaction_insertionHandler = function(httpObj){
     var productCode = httpObj.req.body.productCode;
 
     var comments = httpObj.req.body.comments,
-        eventDate = httpObj.req.body.eventDate,
+        eventDate = js_yyyy_mm_dd_hh_mm_ss(httpObj.req.body.eventDate),
         responseKey = httpObj.req.body.responseKey;
 
     //unique fields
@@ -129,15 +139,15 @@ var roku_transaction_insertionHandler = function(httpObj){
         total = httpObj.req.body.total,
         currency = httpObj.req.body.currency,
         originalTransactionId = httpObj.req.body.originalTransactionId,
-        originalPurchaseDate = httpObj.req.body.originalPurchaseDate,
+        originalPurchaseDate = js_yyyy_mm_dd_hh_mm_ss(httpObj.req.body.originalPurchaseDate),
         partnerReferenceId = httpObj.req.body.partnerReferenceId;
     /**
      * Cancellation,
      */
     var productName = httpObj.req.body.productName,
-        expirationDate = httpObj.req.body.expirationDate,
+        expirationDate = js_yyyy_mm_dd_hh_mm_ss(httpObj.req.body.expirationDate),
         originalTransactionId = httpObj.req.body.originalTransactionId,
-        originalPurchaseDate = httpObj.req.body.originalPurchaseDate,
+        originalPurchaseDate = js_yyyy_mm_dd_hh_mm_ss(httpObj.req.body.originalPurchaseDate),
         partnerReferenceId = httpObj.req.body.partnerReferenceId;
 //customerId, userid, transactionType, transactionId, channelId, channelName, productCode, productName, price,
 // total, tax, currency, comments, eventDate, responseKey, originalTransactionId, originalPurchaseDate,
@@ -149,26 +159,79 @@ var roku_transaction_insertionHandler = function(httpObj){
         originalTransactionId, originalPurchaseDate, expirationDate, partnerReferenceId
     ]; //19 values
 
+    connection.query(queries.roku.rokuCheckTransactionExist,
+        [customerId, transactionType, transactionId, channelId], function(error, result){
+
+            if(error){
+                deferred.reject(error);
+            }else{
+                console.log(result);
+                if(result[0].exist>0){
+
+                    deferred.reject('error')
+                }else{
+                    connection.query(queries.roku.rokuTransaction,
+                        queryArr,
+                        function(error, result){
+                            if(error){
+                                console.log(error);
+                                deferred.reject(error);
+                            }else{
+                                deferred.resolve(httpObj);
+                            }
+                        });
+                }
+            }
+        });
+
+    return deferred.promise;
+};
+
+var renewSubscription = function(httpObj){
     var deferred = Q.defer();
-    connection.query(queries.roku.rokuTransaction,
-        queryArr,
+    connection.query(queries.roku.rokuGetUserBySubscription, [httpObj.req.body.originalTransactionId],
         function(error, result){
-        if(error){
-            deferred.reject(error);
-        }else{
-            deferred.resolve(httpObj);
-        }
+
+        });
+    return deferred.promise;
+};
+
+var cancelSubscriptionNow = function(httpObj){
+    var deferred = Q.defer();
+    connection.query(queries.roku.rokuGetUserBySubscription, [httpObj.req.body.transactionId],
+        function(error, result){
+
+            if(error){
+                deferred.reject(error);
+            }else{
+
+                if(result.length == 0){
+
+                    deferred.reject(error);
+                }else{
+
+                    httpObj.userId = result[0].user_id;
+                    connection.query(queries.roku.rokuRefund, [httpObj.userId], function(error, result){
+                        if(error){
+                            deferred.reject(error);
+                        }else{
+                            deferred.resolve(httpObj);
+                        }
+                    });
+                }
+            }
     });
     return deferred.promise;
 };
 
 var sendResult = function(httpObj){
-    var deferred = Q.defer();
+   // var deferred = Q.defer();
     httpObj.res.setHeader('ApiKey', rokuApiKey);
+
     httpObj.res.send({
         "responseKey": httpObj.req.body.responseKey
     });
-    return deferred.promise;
+    //return deferred.promise;
 };
 
 var creditHandler = function(httpObj){
@@ -186,8 +249,8 @@ var creditHandler = function(httpObj){
     //other transaction logic here
 
     roku_transaction_insertionHandler(httpObj).then(sendResult).catch(function(error){
-        res.status(400);
-        res.send('insert into db failed '+error);
+        httpObj.res.status(400);
+        httpObj.res.send('insert into db failed '+error);
     })
 };
 
@@ -201,8 +264,9 @@ var saleHandler = function(httpObj){
     //other transaction logic here
 
     roku_transaction_insertionHandler(httpObj).then(sendResult).catch(function(error){
-        res.status(400);
-        res.send('insert into db failed '+error);
+
+        httpObj.res.status(400);
+        httpObj.res.send('insert into db failed ');
     })
 };
 
@@ -215,9 +279,11 @@ var refundHandler = function(httpObj){
 
     //other transaction logic here
 
-    roku_transaction_insertionHandler(httpObj).then(sendResult).catch(function(error){
-        res.status(400);
-        res.send('insert into db failed '+error);
+    roku_transaction_insertionHandler(httpObj)
+        .then(cancelSubscriptionNow).then(sendResult).catch(function(error){
+            console.log('aaaaaaa');
+            httpObj.res.status(400);
+            httpObj.res.send('insert into db failed '+error);
     })
 };
 
@@ -231,8 +297,8 @@ var cancellationHandler = function(httpObj){
     //other transaction logic here
 
     roku_transaction_insertionHandler(httpObj).then(sendResult).catch(function(error){
-        res.status(400);
-        res.send('insert into db failed '+error);
+        httpObj.res.status(400);
+        httpObj.res.send('insert into db failed '+error);
     })
 };
 

@@ -175,7 +175,7 @@ var getUser = function(httpObj){
             if(result.length!=0){
                 //user is exist
                 httpObj.res.status(400);
-                httpObj.res.send("user is already exist")
+                httpObj.res.send("user is already exist");
                 deferred.reject("user exist")
             }else{
                 userDetail = result;
@@ -406,7 +406,7 @@ var checkUserById = function(httpObj){
 
 var checkSubscriptionById = function(httpObj){
     var deferred = Q.defer();
-    //console.log('checkSubscriptionById='+httpObj.req.body.subscriptiontypeid);
+    console.log('checkSubscriptionById='+httpObj.req.body.subscriptiontypeid, httpObj.platformid);
     connection.query(queries.users.checkSubscriptionById,
         [httpObj.req.body.subscriptiontypeid, httpObj.platformid],
         function(err, result){
@@ -415,7 +415,7 @@ var checkSubscriptionById = function(httpObj){
                 deferred.reject(err)
             }else{
                 if(result.length==0){
-
+            console.log(result);
                     deferred.reject('error')
                 }else{
 
@@ -471,7 +471,7 @@ var createUserSubscription = function(httpObj){
     connection.query(queries.users.createSubscription,
         [httpObj.req.body.userid, httpObj.req.body.subscriptiontypeid, expDate], function(err, result){
             if(err){
-                console.log(err)
+                console.log(err);
                 deferred.reject(err)
             }else{
                 console.log(result.insertId+"========");
@@ -501,15 +501,15 @@ var createSubscriptionPayment = function(httpObj){
             1, httpObj.req.body.transactionid, httpObj.req.body.currency, httpObj.req.body.testcard],
     function(error, result){
         if(error){
-            console.log(error)
+            console.log(error);
             deferred.reject(error);
         }else{
             deferred.resolve(httpObj);
         }
-    })
+    });
     //console.log(httpObj.req.body.userid, httpObj.req.body.subscriptiontypeid)
     return deferred.promise;
-}
+};
 
 var sendResult = function(httpObj){
 
@@ -548,7 +548,7 @@ router.post('/subscription', passport.authenticate('basic', { session: false }),
     getPlatform(httpObj).then(checkUserById).then(checkSubscriptionById).then(getSubscriptionType)
         .then(createUserSubscription).then(createSubscriptionPayment).then(sendResult)
         .catch(function(error){
-            console.log(error)
+            console.log(error);
             res.status(400);
             res.send('error on create user');
         });

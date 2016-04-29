@@ -1,50 +1,53 @@
 {
   "getAuthUser": "SELECT * FROM api_consumers WHERE username=? AND password=?",
-  "genres":{
+  "genres": {
     "allGenres": "SELECT g.genre_id, g.genre_name, CONCAT(?,g.genre_image) AS genre_image, CONCAT(?,g.genre_thumbnail) AS genre_thumbnail, CONCAT(?,g.genre_banner) AS genre_banner, g.STATUS, g.POSITION, (SELECT COUNT(*) FROM genre_has_song AS gc INNER JOIN song AS s WHERE gc.genre_id=g.genre_id AND gc.song_id= s.song_id AND s.status = 1) AS genre_count FROM genre AS g WHERE STATUS=1",
     "singleGenre": "SELECT g.genre_id, g.genre_name, CONCAT(?,g.genre_image) AS genre_image, CONCAT(?,g.genre_thumbnail) AS genre_thumbnail, CONCAT(?,g.genre_banner) AS genre_banner, g.STATUS, g.POSITION,(SELECT COUNT(*) FROM genre_has_song AS gc INNER JOIN song AS s WHERE gc.genre_id=g.genre_id AND gc.song_id= s.song_id AND s.status = 1) AS genre_countFROM genre AS g WHERE STATUS=1 AND g.genre_id=?"
   },
-  "songs":{
-    "allSongs": "SELECT s.song_id, s.sku, s.artist, s.year, s.status, CONCAT(?, s.song_link) AS song_link, s.title, GROUP_CONCAT(gs.genre_id ) AS 'Genre_Id' FROM song AS s INNER JOIN genre_has_song AS gs WHERE gs.song_id = s.song_id GROUP BY s.song_id",
-    "songsInGenre":"SELECT genre_id, song.song_id, sku, title, artist, YEAR, CONCAT(?,song_link) AS song_link, STATUS FROM genre_has_song, song WHERE genre_id =? AND genre_has_song.song_id=song.song_id",
-    "singleSong":"SELECT s.song_id, s.sku, s.title, s.artist, s.year, CONCAT(?,song_link) AS song_link, s.status, GROUP_CONCAT(gs.genre_id) AS Genre_Id FROM song AS s INNER JOIN genre_has_song AS gs WHERE s.song_id=? AND gs.song_id=s.song_id GROUP BY s.song_id"
+  "songs": {
+    "allSongs": "SELECT s.song_id, s.sku, s.artist, s.year, s.status, img_url, CONCAT(?, s.song_link) AS song_link, s.title, GROUP_CONCAT(gs.genre_id ) AS 'Genre_Id' FROM song AS s INNER JOIN genre_has_song AS gs WHERE gs.song_id = s.song_id GROUP BY s.song_id",
+    "songsInGenre": "SELECT genre_id, song.song_id, sku, title, artist, img_url, YEAR, CONCAT(?,song_link) AS song_link, STATUS FROM genre_has_song, song WHERE genre_id =? AND genre_has_song.song_id=song.song_id",
+    "singleSong": "SELECT s.song_id, s.sku, s.title, s.artist, s.year, img_url, CONCAT(?,song_link) AS song_link, s.status, GROUP_CONCAT(gs.genre_id) AS Genre_Id FROM song AS s INNER JOIN genre_has_song AS gs WHERE s.song_id=? AND gs.song_id=s.song_id GROUP BY s.song_id"
   },
   "featured": {
     "featuredGenres": "SELECT genre.genre_id, genre_name, CONCAT(?, genre.genre_image) AS genre_image, CONCAT(?, genre_thumbnail) AS genre_thumbnail, CONCAT(?, genre_banner) AS genre_banner FROM block_has_genre, genre WHERE block_id=5 AND block_has_genre.genre_id=genre.genre_id"
   },
   "playlist": {
-    "allPlaylists":"SELECT * FROM playlist AS P INNER JOIN users_has_platform AS UP ON P.user_id=UP.user_id WHERE UP.platform_id = ?",
+    "allPlaylists": "SELECT * FROM playlist AS P INNER JOIN users_has_platform AS UP ON P.user_id=UP.user_id WHERE UP.platform_id = ?",
     "newPlaylist": "INSERT INTO playlist (playlist_id, playlist_name, user_id, is_active) VALUES (?, ?, ?, ?)",
     "getMaxPlaylistId": "SELECT MAX(playlist_id) as playlist FROM playlist",
     "addSongsToPlaylist": "INSERT INTO playlist_song (playlist_id, song_id, is_active) VALUES (?,?,?)",
-    "playlistsInUserId":"SELECT playlist_id, playlist_name, created_date FROM playlist WHERE user_id= ?",
-    "songsInPlaylist":"SELECT song.song_id, sku, title, artist, CONCAT(?,song_link) AS song_link FROM song, playlist_song WHERE playlist_song.song_id = song.song_id AND is_active = 1 AND playlist_id =?"
+    "playlistsInUserId": "SELECT playlist_id, playlist_name, created_date FROM playlist WHERE user_id= ?",
+    "songsInPlaylist": "SELECT song.song_id, sku, title, artist, img_url, CONCAT(?,song_link) AS song_link FROM song, playlist_song WHERE playlist_song.song_id = song.song_id AND is_active = 1 AND playlist_id =?"
   },
   "homeblock": {
-    "bestGroup":"SELECT id, song.song_id, sku, title, artist, year, CONCAT(?,song_link) AS song_link, status FROM block_has_song, song WHERE block_id=1 AND block_has_song.song_id=song.song_id ORDER BY block_id asc",
-    "top5":"SELECT id, song.song_id, sku, title, artist, year, CONCAT(?,song_link) AS song_link, status FROM block_has_song, song WHERE block_id=2 AND block_has_song.song_id=song.song_id ORDER BY block_id asc",
-    "bannerGenre":"SELECT block_has_banner.id, genre.genre_id, genre.genre_name, CONCAT(?, genre.genre_banner) AS genre_banner FROM block_has_banner, genre WHERE block_has_banner.genre_id = genre.genre_id AND block_id=3",
-    "newRelease":"SELECT id, artist, block_has_image.song_id, CONCAT(?, image_link) AS image_link, CONCAT(?,song_link) AS song_link, song.title FROM song, block_has_image WHERE song.song_id = block_has_image.song_id AND block_id=4"
+    "bestGroup": "SELECT id, song.song_id, sku, title, artist, img_url, year, CONCAT(?,song_link) AS song_link, status FROM block_has_song, song WHERE block_id=1 AND block_has_song.song_id=song.song_id ORDER BY block_id asc",
+    "top5": "SELECT id, song.song_id, sku, title, artist, year, img_url, CONCAT(?,song_link) AS song_link, status FROM block_has_song, song WHERE block_id=2 AND block_has_song.song_id=song.song_id ORDER BY block_id asc",
+    "bannerGenre": "SELECT block_has_banner.id, genre.genre_id, genre.genre_name, CONCAT(?, genre.genre_banner) AS genre_banner FROM block_has_banner, genre WHERE block_has_banner.genre_id = genre.genre_id AND block_id=3",
+    "newRelease": "SELECT id, artist, block_has_image.song_id, song.img_url, CONCAT(?, image_link) AS image_link, CONCAT(?,song_link) AS song_link, song.title FROM song, block_has_image WHERE song.song_id = block_has_image.song_id AND block_id=4"
   },
-  "users":{
+  "users": {
     "allUsers": "SELECT U.* FROM users AS U INNER JOIN users_has_platform AS P ON U.user_id=P.user_id WHERE P.platform_id=?",
     "getuserByDevice": "SELECT * FROM users AS U INNER JOIN users_has_platform AS UP ON U.user_id=UP.user_id WHERE U.device_code = ? AND UP.platform_id = ?",
-    "allSubscription": "SELECT id, subscription_name, description, price, created_date, status FROM subscription_type WHERE platform_id = ?",
-    "getSubscriptionById":"SELECT * FROM subscription_type WHERE id = ? AND platform_id = ?",
+    "allSubscription": "SELECT id, subscription_name, description, price, created_date, status, product_id FROM subscription_type WHERE platform_id = ?",
+    "getSubscriptionById": "SELECT * FROM subscription_type WHERE id = ? AND platform_id = ?",
     "getMaxUserId": "SELECT MAX(user_id) AS user_id FROM users",
     "createUser": "INSERT INTO users (user_id, device_code, name, email, password, ip_address, mac_address, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, 1)",
     "getUserPlatform": "SELECT platformid FROM api_consumers WHERE username=? AND PASSWORD=?",
     "createUserPlatform": "INSERT INTO users_has_platform (user_id, platform_id) VALUES (?, ?)",
     "userHasSubscription": "SELECT S.user_id, S.created_date, S.expiry_date, S.status, ST.subscription_name, ST.description, ST.price FROM subscription AS S INNER JOIN subscription_type AS ST ON S.subscription_type_id = ST.id WHERE user_id = ?",
     "checkUserById": "SELECT user_id FROM users WHERE user_id = ?",
-    "checkSubscriptionById":"SELECT * FROM subscription_type WHERE id = ? AND platform_id = ?",
+    "checkSubscriptionById": "SELECT * FROM subscription_type WHERE id = ? AND platform_id = ?",
     "getSubscriptionType": "SELECT * FROM subscription_type WHERE id=? AND platform_id = ?",
     "createSubscription": "INSERT INTO subscription (user_id, subscription_type_id, expiry_date, STATUS) VALUES(?, ?, ?, 1)"
   },
-  "payment":{
+  "payment": {
     "createSubscriptionPayment": "INSERT INTO subscription_payment (user_id, subscription_id, product_id, price, payment_status, transaction_id, currency, test_card) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
   },
-  "roku":{
+  "roku": {
+    "rokuGetUserBySubscription": "SELECT user_id FROM subscription_payment WHERE REPLACE(transaction_id,'-', '') = ?",
+    "rokuRefund": "UPDATE subscription SET expiry_date=NOW(), STATUS=0 WHERE user_id=? AND STATUS=1",
+    "rokuCheckTransactionExist": "SELECT COUNT(*) AS exist FROM roku_transactions WHERE customerId = ? AND transactionType = ? AND transactionId = ? AND channelId=?",
     "rokuTransaction": "INSERT INTO roku_transactions (customerId, userid, transactionType, transactionId, channelId, channelName, productCode, productName, price, total, tax, currency, comments, eventDate, responseKey, originalTransactionId, originalPurchaseDate, expirationDate, partnerReferenceId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
   }
 }

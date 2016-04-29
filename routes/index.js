@@ -5,7 +5,7 @@ var connection = require('../db');
 var cors = require('cors');
 
 router.all('*', function(req, res, next) {
-	console.log('alllllllll')
+	console.log('alllllllll');
        res.header("Access-Control-Allow-Origin", "*");
        res.header("Access-Control-Allow-Headers", "X-Requested-With");
        res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -33,12 +33,12 @@ router.get('/', passport.authenticate('basic', { session: false }),
 
 
 router.get('/test', function(req, res){
-    console.log('test route')
+    console.log('test route');
     res.send('aaaaaa');
 });
 
 router.get('/testpage', function(req, res){
 	res.render('tester', {});
-})
+});
 
 module.exports = router;

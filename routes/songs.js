@@ -19,7 +19,7 @@ router.get('/', passport.authenticate('basic', { session: false }),
             function(error, result){
             if(error){
                 //throw error;
-                console.log(error)
+                console.log(error);
                 res.send('error on get genre list');
                 //connection.end();
             }else {
@@ -40,7 +40,7 @@ router.get('/:id',passport.authenticate('basic', { session: false }), function(r
     connection.query(queries.songs.singleSong, [video_base_url, songId], function(error, result){
         if(error){
             //throw error;
-            console.log(error)
+            console.log(error);
             res.send('error on get genre list');
             //connection.end();
         }else {

@@ -16,9 +16,9 @@ router.get('/', passport.authenticate('basic', { session: false }),
     function(req, res) {
         connection.query(queries.genres.allGenres, [img_base_url, img_base_url, img_base_url], function(error, result){
             if(error){
-                console.log(queries.genres.allGenres)
+                console.log(queries.genres.allGenres);
                 //throw error;
-                console.log(error)
+                console.log(error);
                 res.send('error on get genre list');
                 //connection.end();
             }else {
@@ -34,11 +34,11 @@ router.get('/', passport.authenticate('basic', { session: false }),
 
 router.get('/songs/:genreId', passport.authenticate('basic', { session: false }), function(req, res) {
     var genId = req.params.genreId;
-    console.log(queries.songs.songsInGenre)
+    console.log(queries.songs.songsInGenre);
     connection.query(queries.songs.songsInGenre, [video_base_url, genId], function(error, result){
         if(error){
             //throw error;
-            console.log(error)
+            console.log(error);
             res.send('error on get genre list');
             //connection.end();
         }else {

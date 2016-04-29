@@ -78,8 +78,8 @@
                 ':'+window.btoa('kchannel2016rokupassword')
             },
             success: function (data) {
-                console.log(window.btoa('ktvroku:ktvroku'))
-                console.log(window.atob(encodedData))
+                console.log(window.btoa('ktvroku:ktvroku'));
+                console.log(window.atob(encodedData));
                 console.log(data)
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -113,7 +113,7 @@
      }
 
     function postSubscription(){
-        console.log(window.btoa('kchannel2016rokuusername:kchannel2016rokupassword'))
+        console.log(window.btoa('kchannel2016rokuusername:kchannel2016rokupassword'));
         $.ajax({
             url: "http://localhost:3000/users/subscription",
             type: "POST", //This is what you should chage

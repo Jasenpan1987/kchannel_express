@@ -34,10 +34,10 @@ router.get('/', passport.authenticate('basic', { session: false }), function(req
                 var platformid = result[0].platformid;
                 connection.query(queries.playlist.allPlaylists, [platformid],
                     function(error, result){
-                        console.log('platformid'+platformid)
+                        console.log('platformid'+platformid);
                     if(error){
                         //throw error;
-                        console.log(error)
+                        console.log(error);
                         res.send('error on get genre list');
                     }else {
                         //console.log(connection);
@@ -56,16 +56,16 @@ router.get('/', passport.authenticate('basic', { session: false }), function(req
  */
 
 router.post('/', passport.authenticate('basic', { session: false }), function(req, res){
-    console.log("herererereerere")
+    console.log("herererereerere");
     var playlistName = req.body.playlistname;
     var userId = req.body.userid;
     var playlistSongs = req.body.playlistsongs;
-    console.log(playlistSongs)
+    console.log(playlistSongs);
     playlistSongs = playlistSongs.replace('"', '');
     playlistSongs = playlistSongs.replace("'", "");
     var playlistArr = playlistSongs.split(',');
     var playlistId;
-    var a = '0'
+    var a = '0';
     console.log(playlistName, userId, playlistArr);
     var errArr = [];
 
@@ -101,7 +101,7 @@ router.post('/', passport.authenticate('basic', { session: false }), function(re
                                                 });
                                             }else{
                                                 if(index==playlistArr.length-1){
-                                                    console.log(errArr.length)
+                                                    console.log(errArr.length);
                                                     if(errArr.length == 0){
                                                         connection.commit(function(err) {
                                                             if (err) {
@@ -111,7 +111,7 @@ router.post('/', passport.authenticate('basic', { session: false }), function(re
                                                                 if(errArr.lengh==0){
                                                                     res.send('error2')
                                                                 }else{
-                                                                    console.log('success'+a)
+                                                                    console.log('success'+a);
                                                                     var resData = {
                                                                         "status": "successful",
                                                                         "userId": userId,
@@ -148,7 +148,7 @@ router.get('/:userid', passport.authenticate('basic', { session: false }), funct
     connection.query(queries.playlist.playlistsInUserId, [userId], function(error, result){
         if(error){
             //throw error;
-            console.log(error)
+            console.log(error);
             res.send('error on get genre list');
         }else {
             //console.log(connection);
@@ -165,8 +165,8 @@ router.get('/songs/:playlistid', passport.authenticate('basic', { session: false
     connection.query(queries.playlist.songsInPlaylist, [video_base_url, playlistId], function(error, result){
         if(error){
             //throw error;
-            console.log()
-            console.log(error)
+            console.log();
+            console.log(error);
             res.send('invalid playlist id');
         }else {
             //console.log(connection);

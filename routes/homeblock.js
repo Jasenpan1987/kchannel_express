@@ -56,7 +56,7 @@ var getBannerGenre = function(res){
         }else{
             var bannerGenre = {'bannerGenre':result};
             res.homeblock.push(bannerGenre);
-            console.log("running in bannerGenre")
+            console.log("running in bannerGenre");
             deferred.resolve(res);
         }
     });

@@ -47,7 +47,7 @@ var app = express();
 
 app.options('/.*/', function(req, res){
   console.log('options is called');
-})
+});
 // app.all('*',function (req, res, next) {
 //   console.log("app alllllllll")
 //   res.header('Access-Control-Allow-Origin', '*');

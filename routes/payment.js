@@ -26,7 +26,7 @@ router.post("/", passport.authenticate('basic', { session: false }), function(re
         testCard = 1;
     }
 
-    console.log(userId, subscriptionId, productId, price, paymentStatus, transactionId, currency, testCard)
+    console.log(userId, subscriptionId, productId, price, paymentStatus, transactionId, currency, testCard);
 
     connection.query(queries.payment.createSubscriptionPayment,
         [userId, subscriptionId, productId, price, paymentStatus, transactionId, currency, testCard],
@@ -49,7 +49,7 @@ router.post("/", passport.authenticate('basic', { session: false }), function(re
 
                 res.send(resData);
             }
-    })
+    });
     //res.send('working')
 });
 

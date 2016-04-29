@@ -10,9 +10,9 @@ var video_base_url = 'http://d37ue36c90zr4n.cloudfront.net/';
 router.get('/',passport.authenticate('basic', { session: false }), function(req, res){
     connection.query(queries.featured.featuredGenres, [img_base_url, img_base_url, img_base_url], function(error, result){
         if(error){
-            console.log(queries.genres.allGenres)
+            console.log(queries.genres.allGenres);
             //throw error;
-            console.log(error)
+            console.log(error);
             res.send('error on get genre list');
             //connection.end();
         }else {
