@@ -5,8 +5,8 @@
     "singleGenre": "SELECT g.genre_id, g.genre_name, CONCAT(?,g.genre_image) AS genre_image, CONCAT(?,g.genre_thumbnail) AS genre_thumbnail, CONCAT(?,g.genre_banner) AS genre_banner, g.STATUS, g.POSITION,(SELECT COUNT(*) FROM genre_has_song AS gc INNER JOIN song AS s WHERE gc.genre_id=g.genre_id AND gc.song_id= s.song_id AND s.status = 1) AS genre_countFROM genre AS g WHERE STATUS=1 AND g.genre_id=?"
   },
   "songs": {
-    "allSongs": "SELECT s.song_id, s.sku, s.artist, s.year, s.status, CONCAT(?, img_url) AS img_url, CONCAT(?, s.song_link) AS song_link, s.title, GROUP_CONCAT(gs.genre_id ) AS 'Genre_Id' FROM song AS s INNER JOIN genre_has_song AS gs WHERE gs.song_id = s.song_id AND s.status=1 GROUP BY s.song_id",
-    "songsInGenre": "SELECT genre_id, song.song_id, sku, title, artist, CONCAT(?, img_url) AS img_url, YEAR, CONCAT(?,song_link) AS song_link, STATUS FROM genre_has_song, song WHERE genre_id =? AND genre_has_song.song_id=song.song_id AND song.status=1",
+    "allSongs": "SELECT s.song_id, s.sku, s.artist, s.year, s.status, CONCAT(?, img_url) AS img_url, CONCAT(?, s.song_link) AS song_link, s.title, GROUP_CONCAT(gs.genre_id ) AS 'Genre_Id' FROM song AS s INNER JOIN genre_has_song AS gs WHERE gs.song_id = s.song_id GROUP BY s.song_id",
+    "songsInGenre": "SELECT genre_id, song.song_id, sku, title, artist, CONCAT(?, img_url) AS img_url, YEAR, CONCAT(?,song_link) AS song_link, STATUS FROM genre_has_song, song WHERE genre_id =? AND genre_has_song.song_id=song.song_id",
     "singleSong": "SELECT s.song_id, s.sku, s.title, s.artist, s.year, CONCAT(?, img_url) AS img_url, CONCAT(?,song_link) AS song_link, s.status, GROUP_CONCAT(gs.genre_id) AS Genre_Id FROM song AS s INNER JOIN genre_has_song AS gs WHERE s.song_id=? AND gs.song_id=s.song_id GROUP BY s.song_id"
   },
   "featured": {
@@ -48,6 +48,8 @@
     "rokuGetUserBySubscription": "SELECT user_id FROM subscription_payment WHERE REPLACE(transaction_id,'-', '') = ?",
     "rokuRefund": "UPDATE subscription SET expiry_date=NOW(), STATUS=0 WHERE user_id=? AND STATUS=1",
     "rokuCheckTransactionExist": "SELECT COUNT(*) AS exist FROM roku_transactions WHERE customerId = ? AND transactionType = ? AND transactionId = ? AND channelId=?",
-    "rokuTransaction": "INSERT INTO roku_transactions (customerId, userid, transactionType, transactionId, channelId, channelName, productCode, productName, price, total, tax, currency, comments, eventDate, responseKey, originalTransactionId, originalPurchaseDate, expirationDate, partnerReferenceId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+    "rokuTransaction": "INSERT INTO roku_transactions (customerId, userid, transactionType, transactionId, channelId, channelName, productCode, productName, price, total, tax, currency, comments, eventDate, responseKey, originalTransactionId, originalPurchaseDate, expirationDate, partnerReferenceId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    "rokuGetTransactionIdByUserid": "SELECT * FROM subscription_payment WHERE user_id = ? AND product_id = ? AND payment_status=1 ORDER BY created_at DESC LIMIT 1 ",
+    "updateSubscription":"UPDATE subscription SET expiry_date = ?, STATUS = 1 WHERE id = ?"
   }
 }

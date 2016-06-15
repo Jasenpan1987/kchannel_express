@@ -17,6 +17,7 @@ var songs = require('./routes/songs');
 var featured = require('./routes/featured');
 var playlist = require('./routes/playlist');
 var homeblock = require('./routes/homeblock');
+var roku_confirmation_handler = require('./routes/roku_confirmation_handler');//call roku apis to confirm the user
 //var payment = require('./routes/payment');
 var roku_notification_handler = require('./routes/roku_notification_handler');
 
@@ -48,6 +49,7 @@ var app = express();
 app.options('/.*/', function(req, res){
   console.log('options is called');
 });
+
 // app.all('*',function (req, res, next) {
 //   console.log("app alllllllll")
 //   res.header('Access-Control-Allow-Origin', '*');
@@ -86,6 +88,7 @@ app.use('/playlist', playlist);
 app.use('/homeblock', homeblock);
 //app.use('/payment', payment);
 app.use('/notifications', roku_notification_handler);
+app.use('/confirmations', roku_confirmation_handler);
 
 
 
@@ -102,22 +105,29 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
+    //res.status(err.status || 500);
+    //res.render('error', {
+    //  message: err.message,
+    //  error: err
+    //});
+
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+    res.send('Server Error')
   });
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
+  //res.status(err.status || 500);
+  //res.render('error', {
+  //  message: err.message,
+  //  error: {}
+  //});
+
   res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+  res.send('Server Error')
+
 });
 
 

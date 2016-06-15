@@ -22,6 +22,7 @@ var getBgroupGenre = function(res){
     var deferred = Q.defer();
     connection.query(queries.homeblock.bestGroup, [img_base_url, video_base_url], function(error, result){
         if(error){
+            //console.log(error)
             deferred.reject(error);
         }else{
             var bestGroup = {'bestGroup':result};
@@ -37,6 +38,7 @@ var getT5Genre = function(res){
     var deferred = Q.defer();
     connection.query(queries.homeblock.top5,[img_base_url, video_base_url], function(error, result){
         if(error){
+            //console.log(error)
             deferred.reject(error);
         }else{
             var top5 = {'top5':result};
@@ -67,6 +69,8 @@ var getNewReleaseGenre = function(res){
     var deferred = Q.defer();
     connection.query(queries.homeblock.newRelease,[img_base_url, img_base_url, video_base_url], function(error, result){
         if(error){
+            //console.log('getnerelease err')
+            //console.log(error)
             deferred.reject(error);
         }else{
             var getNewRelease = {'newRelease':result};

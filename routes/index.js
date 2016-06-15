@@ -5,11 +5,10 @@ var connection = require('../db');
 var cors = require('cors');
 
 router.all('*', function(req, res, next) {
-	console.log('alllllllll');
-       res.header("Access-Control-Allow-Origin", "*");
-       res.header("Access-Control-Allow-Headers", "X-Requested-With");
-       res.header('Access-Control-Allow-Headers', 'Content-Type');
-       next();
+   res.header("Access-Control-Allow-Origin", "*");
+   res.header("Access-Control-Allow-Headers", "X-Requested-With");
+   res.header('Access-Control-Allow-Headers', 'Content-Type');
+   next();
 });
 
 /* GET home page. */
@@ -33,12 +32,12 @@ router.get('/', passport.authenticate('basic', { session: false }),
 
 
 router.get('/test', function(req, res){
-    console.log('test route');
-    res.send('aaaaaa');
+    //console.log('test route');
+    res.send('{"status": 1}');
 });
 
-router.get('/testpage', function(req, res){
-	res.render('tester', {});
-});
+//router.get('/testpage', function(req, res){
+//	res.render('tester', {});
+//});
 
 module.exports = router;

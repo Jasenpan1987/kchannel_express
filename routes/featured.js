@@ -12,7 +12,8 @@ router.get('/',passport.authenticate('basic', { session: false }), function(req,
         if(error){
             console.log(queries.genres.allGenres);
             //throw error;
-            console.log(error);
+            //console.log(error)
+            res.status(500);
             res.send('error on get genre list');
             //connection.end();
         }else {
