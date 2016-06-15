@@ -15,18 +15,37 @@ var video_base_url = 'http://d37ue36c90zr4n.cloudfront.net/';
  */
 router.get('/', passport.authenticate('basic', { session: false }),
     function(req, res) {
-        connection.query(queries.songs.allSongs, [img_base_url, video_base_url],
-            function(error, result){
-            if(error){
-                //throw error;
-                console.log(error);
-                res.send('error on get genre list');
-                //connection.end();
-            }else {
-                //console.log(connection);
-                res.send(result);
-            }
-        })
+
+        var searchTerm = req.query.q;
+        console.log(searchTerm);
+        if(searchTerm){
+            searchTerm = '%'+searchTerm+'%'
+            console.log('in / with query string, qs is '+searchTerm);
+            connection.query(queries.songs.searchSong, [img_base_url, video_base_url, searchTerm, searchTerm],
+                function(error, result){
+                    if(error){
+                        console.log(error);
+                        res.send('error on search songs')
+                    }else{
+                        res.send(result);
+                    }
+                })
+        }else{
+            console.log('in / without qs')
+            connection.query(queries.songs.allSongs, [img_base_url, video_base_url],
+                function(error, result){
+                    if(error){
+                        //throw error;
+                        console.log(error);
+                        res.send('error on get genre list');
+                        //connection.end();
+                    }else {
+                        //console.log(connection);
+                        res.send(result);
+                    }
+                })
+        }
+
     });
 
 
@@ -34,6 +53,8 @@ router.get('/', passport.authenticate('basic', { session: false }),
  * list song/songs for a given songId
  * songID=> /:s10
  */
+
+
 
 router.get('/:id',passport.authenticate('basic', { session: false }), function(req, res){
     var songId = req.params.id;
@@ -81,6 +102,26 @@ router.get('/:id',passport.authenticate('basic', { session: false }), function(r
 });
 
 
+/**
+ * Search songs whether its title or its artist match the given term
+ * sample call: /search?q=good+term
+ * q = 'good term'
+ */
+
+router.get('/', passport.authenticate('basic', { session: false }), function(req, res){
+
+    var searchTerm = req.query.q;
+    console.log('in / with query string, qs is '+searchTerm);
+    connection.query(queries.songs.searchSong, [img_base_url, video_base_url, searchTerm, searchTerm],
+        function(error, result){
+            if(error){
+                console.log(error);
+                res.send('error on search songs')
+            }else{
+                res.send(result);
+            }
+        })
+});
 
 module.exports = router;
 

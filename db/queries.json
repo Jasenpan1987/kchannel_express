@@ -7,7 +7,8 @@
   "songs": {
     "allSongs": "SELECT s.song_id, s.sku, s.artist, s.year, s.status, CONCAT(?, img_url) AS img_url, CONCAT(?, s.song_link) AS song_link, s.title, GROUP_CONCAT(gs.genre_id ) AS 'Genre_Id' FROM song AS s INNER JOIN genre_has_song AS gs WHERE gs.song_id = s.song_id AND s.status=1 GROUP BY s.song_id",
     "songsInGenre": "SELECT genre_id, song.song_id, sku, title, artist, CONCAT(?, img_url) AS img_url, YEAR, CONCAT(?,song_link) AS song_link, STATUS FROM genre_has_song, song WHERE genre_id =? AND genre_has_song.song_id=song.song_id AND song.status=1",
-    "singleSong": "SELECT s.song_id, s.sku, s.title, s.artist, s.year, CONCAT(?, img_url) AS img_url, CONCAT(?,song_link) AS song_link, s.status, GROUP_CONCAT(gs.genre_id) AS Genre_Id FROM song AS s INNER JOIN genre_has_song AS gs WHERE s.song_id=? AND gs.song_id=s.song_id GROUP BY s.song_id"
+    "singleSong": "SELECT s.song_id, s.sku, s.title, s.artist, s.year, CONCAT(?, img_url) AS img_url, CONCAT(?,song_link) AS song_link, s.status, GROUP_CONCAT(gs.genre_id) AS Genre_Id FROM song AS s INNER JOIN genre_has_song AS gs WHERE s.song_id=? AND gs.song_id=s.song_id GROUP BY s.song_id",
+    "searchSong": "SELECT s.song_id, s.sku, s.title, s.artist, s.year, CONCAT(?, img_url) AS img_url, CONCAT(?,song_link) AS song_link, s.status, GROUP_CONCAT(gs.genre_id) AS Genre_Id FROM song AS s INNER JOIN genre_has_song AS gs WHERE (s.title LIKE ? OR s.artist LIKE ?) AND gs.song_id=s.song_id AND s.status=1 GROUP BY s.song_id"
   },
   "featured": {
     "featuredGenres": "SELECT genre.genre_id, genre_name, CONCAT(?, genre.genre_image) AS genre_image, CONCAT(?, genre_thumbnail) AS genre_thumbnail, CONCAT(?, genre_banner) AS genre_banner FROM block_has_genre, genre WHERE block_id=5 AND block_has_genre.genre_id=genre.genre_id"
